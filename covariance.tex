@@ -1,0 +1,124 @@
+\documentclass[times]{aastex6}
+\usepackage{graphicx}
+\usepackage[top=1.0in,margin=1.0in]{geometry}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\newcommand*\conj[1]{\bar{#1}}
+\newcommand*\mean[1]{\bar{#1}}
+
+\bibliographystyle{unsrtnat}
+
+\begin{document}
+
+\title{Propagation of Covariance}
+
+\author {Vishal Kasliwal\altaffilmark{1,2}}
+\altaffiltext{1}{University of Pennsylvania \\
+Department of Physics \& Astronomy \\
+209 S. 33$^{\mathrm{rd}}$ St. \\
+Philadelphia, PA 19103, USA}
+\altaffiltext{2}{Princeton University \\
+Department of Astrophysical Sciences \\
+4 Ivy Ln \\
+Princeton, NJ 08544, USA}
+\email{vishal.kasliwal@gmail.com}
+
+%\and
+
+%\author{Jim Bosch\altaffilmark{2}}
+
+\begin{abstract}
+We propagate covariance through the coadd creation process.
+\end{abstract}
+
+\section{Notation}
+Individual visits written as $V^{(n)}$ where $n$ is the visit number. So $V^{(4)}$ would be the 4$^{\mathrm{th}}$ visit used to create a coadd. The $^{(i)}$ will usually be supressed when referring to the transforms related to a single visit for brevity \& clarity. Pixels are indexed with ordered pairs $[i,j]$ where the usual parentheses have been replaced with brackets because actual pixel values in an image array are index using brackets. Hence, $V^{(5)}[3,4]$ refers to the value of the pixel in row 3, column 4 on visit 5.
+
+Coadds are written as $K$. Usually, we will use Greek letters to index pixels on the coadd. Consider the pixel $[\alpha,\beta]$ on the coadd $K$. Many individual visits are used to create the coadd. In general, the gridding of the individual visits will not line up with the gridding of the coadd. In particular, the gridding of any individual visit may be
+\begin{enumerate}
+  \item offset
+  \item rotated
+  \item sheared
+\end{enumerate}
+from the gridding of the coadd. Generating the coadd requires that we know the value of our image on an individual visit at a location corresponding to a coadd grid-point. Under the assumption that the visit has been oversampled, the value of the image at a given location on the visit can be computed using {\it seperable L\'{a}nczos Interpolation}. Consider the coadd grid-point $[\alpha, \beta]$. Define the mapping $S^{(n)}: [\alpha, \beta] \rightarrow [a,b]$ to be the mapping from the coadd gridding to the visit gridding for visit $n$ i.e. $S^{(n)}$ allows us to convert pixel co-ordinates in the coadd to the corresponding (non-integral) pixel co-ordinates in visit $n$. Essentially, $S$ uses the coadd WCS to compute the RA \& Dec of the point and then uses the visit WCS to convert the computed RA \& Dec to pixel co-ordinates in the visit. E.g., $S^{(5)}$ maps coadd grid-point $[3,4]$ to visit grid-point $[3.3, 4.2]$. As with visits, when propagating covariance for a single visit across interpolation, we will supress the visit number when writing $S$.
+
+In order to compute the coadd at grid-point $[\alpha, \beta]$, we wish to compute $V[S(\alpha, \beta)]$ using L\'{a}nczos interpolation. A seperable 2-d L\'{a}nczos kernel $\mathfrak{L}_{o}$ of order-$o$ is given by
+\begin{equation}\label{eq:LanczosKernel}
+  \mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) = \frac{o \sin(\pi x) \sin(\pi x/o)}{\pi^{2} x^{2}} \frac{o \sin(\pi y) \sin(\pi y/o)}{\pi^{2} y^{2}},
+\end{equation}
+where $x = a - i$ \& $y = b - j$, i.e. $[x,y] = [a,b] - [i,j] = S([\alpha, \beta]) - [i,j]$. The coadd grid-point $V[S(\alpha, \beta)]$ may then be computed using
+\begin{equation}\label{eq:LanczosInterp}
+  V[S(\alpha, \beta)] = \sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))V[i,j].
+\end{equation}
+
+\medskip
+
+\section{Visit Model}
+Let $\mathfrak{g}$ be the gain of the camera and let $N$ be the instrument noise level. We assume that the measured value of a pixel $V[i,j]$ is given by
+\begin{equation}\label{eq:PixelModel}
+  V[i,j] = V_{\mathrm{true}}[i,j] + w_{[i,j]},
+\end{equation}
+where $w_{[i,j]} \sim \mathcal{N}(0, V[i,j]/\mathfrak{g} + N)$.
+The mean of the noise in a given pixel is
+\begin{equation}\label{eq:NoiseMean}
+  \langle w_{[i,j]} \rangle = 0,
+\end{equation}
+and the noise covariance between pixels is given by
+\begin{equation}\label{eq:NoiseCovariance}
+  \langle w_{[i,j]}w_{[k,l]} \rangle - \langle w_{[i,j]} \rangle \langle w_{[k,l]} \rangle = \langle w_{[i,j]}w_{[k,l]} \rangle = \left ( \frac{V[i,j]}{\mathfrak{g}} + N \right )\delta_{i,k}\delta_{j,l},
+\end{equation}
+where $\delta_{i,j}$ is the Kronecker delta.
+
+For individual visits, we have
+\begin{equation*}
+  \langle V[i,j] \rangle = \langle V_{\mathrm{true}}[i,j] + w_{[i,j]} \rangle = \langle V_{\mathrm{true}}[i,j] \rangle + \langle w_{[i,j]} \rangle = \langle V_{\mathrm{true}}[i,j] \rangle = V_{\mathrm{true}}[i,j],
+\end{equation*}
+i.e.
+\begin{equation}\label{eq:VisitMean}
+  \langle V[i,j] \rangle = V_{\mathrm{true}}[i,j].
+\end{equation}
+Similarly,
+\begin{multline*}
+  \langle V[i,j]V[k,l] \rangle - \langle V[i,j] \rangle \langle V[k,l] \rangle = \langle (V_{\mathrm{true}}[i,j] + w_{[i,j]})(V_{\mathrm{true}}[k,l] + w_{[k,l]}) \rangle - V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] \\ = \\ \langle V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] + V_{\mathrm{true}}[i,j]w_{[k,l]} + V_{\mathrm{true}}[k,l]w_{[k,l]} + w_{[i,j]}w_{[k,l]} \rangle - V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] \\ = \\ \langle V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] \rangle + \langle V_{\mathrm{true}}[i,j]w_{[k,l]} \rangle + \langle V_{\mathrm{true}}[k,l]w_{[k,l]} \rangle + \langle w_{[i,j]}w_{[k,l]} \rangle - V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] \\ = \\ V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] + V_{\mathrm{true}}[i,j] \langle w_{[k,l]} \rangle + V_{\mathrm{true}}[k,l] \langle w_{[k,l]} \rangle + \langle w_{[i,j]}w_{[k,l]} \rangle - V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] \\ = \\ \langle w_{[i,j]}w_{[k,l]} \rangle = \left ( \frac{V[i,j]}{\mathfrak{g}} + N \right )\delta_{i,k}\delta_{j,l},
+\end{multline*}
+i.e.
+\begin{equation}\label{eq:VisitCovariance}
+  \langle V[i,j]V[k,l] \rangle - \langle V[i,j] \rangle \langle V[k,l] \rangle = \left ( \frac{V[i,j]}{\mathfrak{g}} + N \right )\delta_{i,k}\delta_{j,l}.
+\end{equation}
+
+\medskip
+
+\section{Warp Model}
+The value of a grid-point $[a,b] = S([\alpha, \beta])$ on an individual visit corresponding to grid-point $[\alpha, \beta]$ on the coadd is given by equation~\eqref{eq:LanczosInterp}. The mean value of the grid-point $[a,b]$ is therefore given by
+\begin{multline*}
+  \langle V[S(\alpha, \beta)] \rangle = \langle \sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))V[i,j] \rangle \\ = \\ \sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) \langle V[i,j] \rangle \\ = \\ \sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) \langle V_{\mathrm{true}}[i,j] + w_{[i,j]} \rangle \\ = \\ \sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) \langle V_{\mathrm{true}}[i,j] \rangle + \langle w_{[i,j]} \rangle \\ = \\ \sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))V_{\mathrm{true}}[i,j],
+\end{multline*}
+i.e.
+\begin{equation}\label{eq:VisitCoaddMean}
+  \langle V[S(\alpha, \beta)] \rangle = \sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))V_{\mathrm{true}}[i,j].
+\end{equation}
+Similarly,
+\begin{multline*}
+  \langle V[S(\alpha, \beta)]V[S(\gamma, \delta)] \rangle - \langle V[S(\alpha, \beta)] \rangle \langle V[S(\gamma, \delta)] \rangle \\ = \\ \langle (\sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))V[i,j])(\sum_{k,l}\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))V[k,l]) \rangle \\ - \sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))V_{\mathrm{true}}[i,j] \sum_{k,l}\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))V_{\mathrm{true}}[k,l] \\ = \\ \langle (\sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))V[i,j])(\sum_{k,l}\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))V[k,l]) \rangle \\ - \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) \mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) V_{\mathrm{true}}[i,j] V_{\mathrm{true}}[k,l] \\ = \\ \langle (\sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))(V_{\mathrm{true}}[i,j] + w_{[i,j]}))(\sum_{k,l}\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))(V_{\mathrm{true}}[k,l] + w_{[k,l]})) \rangle \\ - \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) \mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) V_{\mathrm{true}}[i,j] V_{\mathrm{true}}[k,l] \\ = \\ \langle (\sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))V_{\mathrm{true}}[i,j] + \mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))w_{[i,j]})(\sum_{k,l}\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))V_{\mathrm{true}}[k,l] + \mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))w_{[k,l]}) \rangle \\ - \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) \mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) V_{\mathrm{true}}[i,j] V_{\mathrm{true}}[k,l],
+\end{multline*}
+i.e.
+\begin{multline*}
+   \langle V[S(\alpha, \beta)]V[S(\gamma, \delta)] \rangle - \langle V[S(\alpha, \beta)] \rangle \langle V[S(\gamma, \delta)] \rangle \\ = \\ \langle \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] \\ + \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))V_{\mathrm{true}}[i,j]w_{[k,l]} \\ + \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))V_{\mathrm{true}}[k,l]w_{[i,j]} \\ + \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))w_{[i,j]}w_{[k,l]} \rangle \\ - \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) \mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) V_{\mathrm{true}}[i,j] V_{\mathrm{true}}[k,l] \\ = \\ \langle \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] \rangle \\ + \langle \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))V_{\mathrm{true}}[i,j]w_{[k,l]} \rangle \\ + \langle \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))V_{\mathrm{true}}[k,l]w_{[i,j]} \rangle \\ + \langle \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta]))w_{[i,j]}w_{[k,l]} \rangle \\ - \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) \mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) V_{\mathrm{true}}[i,j] V_{\mathrm{true}}[k,l] \\ = \\ \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \langle V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] \rangle \\ + \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \langle V_{\mathrm{true}}[i,j]w_{[k,l]} \rangle \\ + \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \langle V_{\mathrm{true}}[k,l]w_{[i,j]} \rangle \\ + \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \langle w_{[i,j]}w_{[k,l]} \rangle \\ - \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) \mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) V_{\mathrm{true}}[i,j] V_{\mathrm{true}}[k,l] \\ = \\ \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) V_{\mathrm{true}}[i,j]V_{\mathrm{true}}[k,l] \\ + \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) V_{\mathrm{true}}[i,j] \langle w_{[k,l]} \rangle \\ + \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) V_{\mathrm{true}}[k,l] \langle w_{[i,j]} \rangle \\ + \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \langle w_{[i,j]}w_{[k,l]} \rangle \\ - \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta])) \mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) V_{\mathrm{true}}[i,j] V_{\mathrm{true}}[k,l],
+\end{multline*}
+i.e.
+\begin{multline*}
+  \langle V[S(\alpha, \beta)]V[S(\gamma, \delta)] \rangle - \langle V[S(\alpha, \beta)] \rangle \langle V[S(\gamma, \delta)] \rangle \\ = \\ \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \langle w_{[i,j]}w_{[k,l]} \rangle \\ = \\ \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \left ( \frac{V[i,j]}{\mathfrak{g}} + N \right )\delta_{i,k}\delta_{j,l},
+\end{multline*}
+i.e.
+\begin{equation}\label{eq:VisitCoaddMeanCovariance}
+  \langle V[S(\alpha, \beta)]V[S(\gamma, \delta)] \rangle - \langle V[S(\alpha, \beta)] \rangle \langle V[S(\gamma, \delta)] \rangle = \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \left ( \frac{V[i,j]}{\mathfrak{g}} + N \right )\delta_{i,k}\delta_{j,l}.
+\end{equation}
+\medskip
+
+\bibliography{allrefs}
+
+%\allauthors
+
+\end{document}
