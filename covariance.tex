@@ -109,12 +109,17 @@ i.e.
 \end{multline*}
 i.e.
 \begin{multline*}
-  \langle V[S(\alpha, \beta)]V[S(\gamma, \delta)] \rangle - \langle V[S(\alpha, \beta)] \rangle \langle V[S(\gamma, \delta)] \rangle \\ = \\ \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \langle w_{[i,j]}w_{[k,l]} \rangle \\ = \\ \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \left ( \frac{V[i,j]}{\mathfrak{g}} + N \right )\delta_{i,k}\delta_{j,l},
+  \langle V[S(\alpha, \beta)]V[S(\gamma, \delta)] \rangle - \langle V[S(\alpha, \beta)] \rangle \langle V[S(\gamma, \delta)] \rangle \\ = \\ \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \langle w_{[i,j]}w_{[k,l]} \rangle \\ = \\ \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \left ( \frac{V[i,j]}{\mathfrak{g}} + N \right )\delta_{i,k}\delta_{j,l} \\ = \\ \sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([i,j] - S([\gamma, \delta])) \left ( \frac{V[i,j]}{\mathfrak{g}} + N \right ),
 \end{multline*}
 i.e.
 \begin{equation}\label{eq:VisitCoaddMeanCovariance}
-  \langle V[S(\alpha, \beta)]V[S(\gamma, \delta)] \rangle - \langle V[S(\alpha, \beta)] \rangle \langle V[S(\gamma, \delta)] \rangle = \sum_{i,j,k,l}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([k,l] - S([\gamma, \delta])) \left ( \frac{V[i,j]}{\mathfrak{g}} + N \right )\delta_{i,k}\delta_{j,l}.
+  \langle V[S(\alpha, \beta)]V[S(\gamma, \delta)] \rangle - \langle V[S(\alpha, \beta)] \rangle \langle V[S(\gamma, \delta)] \rangle = \sum_{i,j}\mathfrak{L}_{o}([i,j] - S([\alpha, \beta]))\mathfrak{L}_{o}([i,j] - S([\gamma, \delta])) \left ( \frac{V[i,j]}{\mathfrak{g}} + N \right ).
 \end{equation}
+
+\subsection{Example}
+
+For illustration purposes, we work through an example in 1-d. We write out the value and covariance matrix of the coadd grid-point $[\alpha] = [3]$. Under the dual WCS transform to visit $V^{(1)}$, $[3] \rightarrow [3.2]$, i.e. for this simple example, let us assume that the coadd grid is merely offset from the visit grid by 0.2 pixel. We will interpolate the value of $[a] = [3.2]$ as well as it's covariance with the next coadd grid-point $[4.2]$ using a 3$^{\mathrm{rd}}$-order L\'{a}nczos kernel.
+
 \medskip
 
 \bibliography{allrefs}
