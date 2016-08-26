@@ -157,11 +157,11 @@ i.e. generally covaraiance between coadd pixels $K[\alpha,\beta]$ and $K[\gamma,
 \end{equation}
 Under the stricter assumption that the pixel noise is un-correlated across both visits and pixels within a visit, the noise covariance $C_{V^{(n)}V^{(m)}}[i,j,k,l]$ can be simplified giving
 \begin{multline*}
-  \langle K[\alpha,\beta]K[\gamma,\delta] \rangle - \langle K[\alpha,\beta] \rangle \langle K[\gamma, \delta] \rangle = \frac{1}{NM}\sum_{n,m} \sum_{i,j,k,l}\mathfrak{K}([i,j] - S^{(n)}(\alpha,\beta))\mathfrak{K}([k,l] - S^{(m)}(\gamma,\delta)) C_{V^{(n)}V^{(m)}}[i,j,k,l] \\ = \frac{1}{NM}\sum_{n,m} \sum_{i,j,k,l}\mathfrak{K}([i,j] - S(\alpha,\beta))\mathfrak{K}([k,l] - S(\gamma,\delta))\left ( \frac{V[i,j]}{\mathfrak{g}} + \mathfrak{N} \right )\delta_{i,k}\delta_{j,l}\delta_{n,m} \\ = \frac{1}{\min(N,M)^{2}}\sum_{n}^{\min(n,m)} \sum_{i,j}\mathfrak{K}([i,j] - S(\alpha,\beta))\mathfrak{K}([i,j] - S(\gamma,\delta))\left ( \frac{V[i,j]}{\mathfrak{g}} + \mathfrak{N} \right ),
+  \langle K[\alpha,\beta]K[\gamma,\delta] \rangle - \langle K[\alpha,\beta] \rangle \langle K[\gamma, \delta] \rangle = \frac{1}{NM}\sum_{n,m} \sum_{i,j,k,l}\mathfrak{K}([i,j] - S^{(n)}(\alpha,\beta))\mathfrak{K}([k,l] - S^{(m)}(\gamma,\delta)) C_{V^{(n)}V^{(m)}}[i,j,k,l] \\ = \frac{1}{\min(N,M)^{2}}\sum_{n}^{\min(n,m)} \sum_{i,j}\mathfrak{K}([i,j] - S^{(n)}(\alpha,\beta))\mathfrak{K}([i,j] - S^{(n)}(\gamma,\delta))\left ( \frac{V^{(n)}[i,j]}{\mathfrak{g}} + \mathfrak{N} \right ),
 \end{multline*}
 i.e.
 \begin{equation}\label{eq:CoaddMeanCovariance}
-  \langle K[\alpha,\beta]K[\gamma,\delta] \rangle - \langle K[\alpha,\beta] \rangle \langle K[\gamma, \delta] \rangle = \frac{1}{\min(N,M)^{2}}\sum_{n,m}^{\min(n,m)} \sum_{i,j}\mathfrak{K}([i,j] - S(\alpha,\beta))\mathfrak{K}([i,j] - S(\gamma,\delta))\left ( \frac{V[i,j]}{\mathfrak{g}} + \mathfrak{N} \right ).
+  \langle K[\alpha,\beta]K[\gamma,\delta] \rangle - \langle K[\alpha,\beta] \rangle \langle K[\gamma, \delta] \rangle = \frac{1}{\min(N,M)^{2}}\sum_{n}^{\min(n,m)} \sum_{i,j}\mathfrak{K}([i,j] - S^{(n)}(\alpha,\beta))\mathfrak{K}([i,j] - S^{(n)}(\gamma,\delta))\left ( \frac{V^{(n)}[i,j]}{\mathfrak{g}} + \mathfrak{N} \right ).
 \end{equation}
 
 
